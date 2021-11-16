@@ -7,6 +7,7 @@ import org.study.junyharang.entity.Member;
 import org.study.junyharang.entity.Movie;
 import org.study.junyharang.entity.Review;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,5 +45,19 @@ import static org.junit.jupiter.api.Assertions.*;
             reviewRepository.save(review);
         });
     } // 영화리뷰_등록() 끝
+
+    @Test public void 영화_리뷰_조회() {
+        Movie movie = Movie.builder().mno(93L).build();
+
+        List<Review> result = reviewRepository.findByMovie(movie);
+
+        result.forEach(movieReview -> {
+            System.out.print(movieReview.getReviewNum());
+            System.out.print("\t" + movieReview.getGrade());
+            System.out.print("\t" + movieReview.getText());
+            System.out.print("\t" + movieReview.getMember().getEmail());
+            System.out.println("-------------------------------------------");
+        });
+    }
 
 } // class 끝
