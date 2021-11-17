@@ -2,17 +2,29 @@ package org.study.junyharang.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.study.junyharang.dto.UploadResponseDTO;
+import net.coobird.thumbnailator.Thumbnailator;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.List;
 
 @Log4j2 @RestController public class UploadController {
 
@@ -20,14 +32,16 @@ import java.util.UUID;
     private String uploadPath;
 
     @PostMapping("/uploadAjax")
-    public void uploadFile(MultipartFile[] uploadFiles) {
+    public ResponseEntity<List<UploadResponseDTO>> uploadFile(MultipartFile[] uploadFiles) {
+
+        List<UploadResponseDTO> responseDTOList = new ArrayList<>();
 
         for (MultipartFile uploadFile : uploadFiles) {
 
             // 이미지 파일만 업로드 하도록 처리
             if(uploadFile.getContentType().startsWith("image") == false) {  // 업로드 된 파일이 image가 아니라면?
                 log.warn("이 파일은 Image 파일이 아닙니다!");
-                return;
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             } // if문 끝
 
             // 실제 파일 이름이 IE나, Edge는 전체 경로가 들어오기 때문에 아래와 같이 처리
@@ -48,12 +62,54 @@ import java.util.UUID;
             Path savePath = Paths.get(saveName);
 
             try{
+                // 실제 Image 저장
                 uploadFile.transferTo(savePath);
+
+                // 섬네일 만들기
+                String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator + "s_" + uuid + "_" + fileName;
+
+                // 섬네일 파일 이름은 중간에 s_로 시작하도록 설정
+                File thumbnailFile = new File(thumbnailSaveName);
+
+                // 섬네일 생성
+                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile,100,100);
+                responseDTOList.add(new UploadResponseDTO(fileName, uuid, folderPath));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } // for문 끝
+
+        return new ResponseEntity<>(responseDTOList, HttpStatus.OK);
     } // uploadFile() 끝
+
+    @GetMapping("/display") public ResponseEntity<byte[]> getFile(String fileName) {
+
+        ResponseEntity<byte[]> result = null;
+
+        try {
+            String srcFileName = URLDecoder.decode(fileName, "UTF-8");
+
+            log.info("출력되는 Image 파일 이름 : " + srcFileName);
+
+            File file = new File(uploadPath + File.separator + srcFileName);
+
+            log.info("파일 위치 :" + file);
+
+            HttpHeaders headers = new HttpHeaders();
+
+            // MIME Type 처리
+            headers.add("Content-Type", Files.probeContentType(file.toPath()));
+
+            // file Data 처리
+            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } // try-catch 끝
+
+        return result;
+    } // getFile() 끝
 
     private String makeFolder() {
 
