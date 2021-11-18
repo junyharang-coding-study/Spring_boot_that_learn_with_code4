@@ -1,5 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic:: setContent(~{this::content} )}">
+
+
+    <th:block th:fragment="content">
+
 <head>
     <meta charset="UTF-8">
     <title>주니하랑의 스프링으로 파일 업로드 실습!</title>
@@ -84,5 +90,7 @@
             }); // $.ajax 끝
         });
     </script>
+    </th:block>
+</th:block>
 </body>
 </html>
