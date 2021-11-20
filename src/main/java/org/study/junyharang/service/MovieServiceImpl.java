@@ -52,4 +52,26 @@ import java.util.function.Function;
 
         return new PageResponseDTO<>(result, fn);
     } // getList() 끝
+
+    @Override
+    public MovieDTO getMovie(Long mno) {
+        List<Object[]> result = movieRepository.getMovieWithAll(mno);
+
+        // Movie Entity는 가장 앞에 존재 - 모든 Row가 동일 값
+        Movie movie = (Movie) result.get(0)[0];
+
+        List<MovieImage> movieImageList = new ArrayList<>();
+
+        result.forEach(arr -> {
+            MovieImage movieImage = (MovieImage) arr[1];
+            movieImageList.add(movieImage);
+        });
+
+        // 평군 평점 - 모든 Row가 동일한 값
+        Double avg = (Double) result.get(0)[2];
+        // 리뷰 개수 - 모든 Row가 동일한 값
+        Long reviewCnt = (Long) result.get(0)[3];
+
+        return entitiesToDTO(movie, movieImageList, avg, reviewCnt);
+    } // getMovie() 끝
 } // class 끝

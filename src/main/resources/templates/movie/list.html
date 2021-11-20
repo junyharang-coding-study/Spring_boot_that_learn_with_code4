@@ -22,15 +22,15 @@
       <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Picture</th>
-        <th scope="col">Review Count</th>
-        <th scope="col">AVG Rating</th>
-        <th scope="col">Regdate</th>
+        <th scope="col">사진</th>
+        <th scope="col">리뷰 수</th>
+        <th scope="col">평점 평균</th>
+        <th scope="col">작성일</th>
       </tr>
       </thead>
       <tbody>
 
-      <tr th:each="dto : ${result.dtoList}" >
+      <tr th:each="dto:${result.dtoList}">
         <th scope="row">
           <a th:href="@{/movie/read(mno = ${dto.mno}, page= ${result.page})}">
             [[${dto.mno}]]

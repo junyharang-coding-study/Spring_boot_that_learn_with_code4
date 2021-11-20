@@ -3,15 +3,14 @@ package org.study.junyharang.service;
 import org.study.junyharang.dto.MovieDTO;
 import org.study.junyharang.dto.MovieImageDTO;
 import org.study.junyharang.dto.PageRequestDTO;
+import org.study.junyharang.dto.PageResponseDTO;
 import org.study.junyharang.entity.Movie;
 import org.study.junyharang.entity.MovieImage;
-import org.study.junyharang.dto.PageResponseDTO;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public interface MovieService {
 
@@ -19,6 +18,9 @@ public interface MovieService {
     
     // 목록 처리
     PageResponseDTO<MovieDTO, Object[]> getList(PageRequestDTO requestDTO);
+
+    // 조회 페이지
+    MovieDTO getMovie(Long mno);
 
     default Map<String, Object> dtoToEntity(MovieDTO movieDTO) { // DTO Type을 Map Type으로 반환
 
@@ -31,12 +33,12 @@ public interface MovieService {
 
         entityMap.put("movie", movie);
 
-        List<MovieImageDTO> movieImageList = movieDTO.getImageDTOList();
+        List<MovieImageDTO> imageDTOList = movieDTO.getImageDTOList();
 
         //영화 이미지 DTO 처리
-        if (movieImageList != null && movieImageList.size() > 0) { // 영화 이미지 DTO가 비어 있지 않다면?
+        if (imageDTOList != null && imageDTOList.size() > 0) { // 영화 이미지 DTO가 비어 있지 않다면?
 
-            movieImageList.stream().map(movieImageDTO -> {
+            List<MovieImage> movieImageList = imageDTOList.stream().map(movieImageDTO -> {
 
                 MovieImage movieImage = MovieImage.builder()
                         .path(movieImageDTO.getPath())
@@ -75,6 +77,8 @@ public interface MovieService {
 //        movieDTO.setImageDTOList(movieImageDTOList);
 //        movieDTO.setAvg(avg);
 //        movieDTO.setReviewCnt(reviewCnt.intValue());
+//
+//        return movieDTO;
         
         MovieDTO movieDTOBuilder = movieDTO.builder().imageDTOList(movieImageDTOList)
                 .avg(avg)
