@@ -18,4 +18,12 @@ import javax.persistence.*;
 
     private String text;
 
+    public void changeGrade(int grade) { // 리뷰 평점 수정 기능
+        this.grade = grade;
+    } // changeGrade() 끝
+
+    public void changeText(String text) { // 리뷰 수정 기능
+        this.text = text;
+    } // changeText() 끝
+
 } // class 끝
