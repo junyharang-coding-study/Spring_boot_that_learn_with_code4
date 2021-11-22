@@ -57,7 +57,7 @@ import java.util.List;
             String uuid = UUID.randomUUID().toString();
 
             // 저장할 파일 이름 중간에 Under Bar를 이용해서 구분
-            String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
+            String saveName = uploadPath + File.separator + folderPath + File.separator + uuid +"_" + fileName;
 
             Path savePath = Paths.get(saveName);
 
@@ -66,7 +66,7 @@ import java.util.List;
                 uploadFile.transferTo(savePath);
 
                 // 섬네일 만들기
-                String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator + "s_" + uuid + "_" + fileName;
+                String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator +"s_" + uuid +"_" + fileName;
 
                 // 섬네일 파일 이름은 중간에 s_로 시작하도록 설정
                 File thumbnailFile = new File(thumbnailSaveName);
@@ -83,7 +83,7 @@ import java.util.List;
         return new ResponseEntity<>(responseDTOList, HttpStatus.OK);
     } // uploadFile() 끝
 
-    @GetMapping("/display") public ResponseEntity<byte[]> getFile(String fileName) {
+    @GetMapping("/display") public ResponseEntity<byte[]> getFile(String fileName, String size) {
 
         ResponseEntity<byte[]> result = null;
 
@@ -92,7 +92,12 @@ import java.util.List;
 
             log.info("출력되는 Image 파일 이름 : " + srcFileName);
 
-            File file = new File(uploadPath + File.separator + srcFileName);
+            File file = new File(uploadPath +File.separator+ srcFileName);
+
+            if (size != null && size.equals("1")) { // size 변수 값이 null이 아니면서 1일 경우
+                // 섬네일이 아닌 원본 이미지를 전송
+               file = new File(file.getParent(), file.getName().substring(2));
+            } // if문 끝
 
             log.info("파일 위치 :" + file);
 
@@ -115,7 +120,7 @@ import java.util.List;
 
         String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
-        String folderPath = str.replace("/", File.separator);
+        String folderPath = str.replace("//", File.separator);
 
         // 폴더 생성
         File uploadPathFolder = new File(uploadPath, folderPath);
