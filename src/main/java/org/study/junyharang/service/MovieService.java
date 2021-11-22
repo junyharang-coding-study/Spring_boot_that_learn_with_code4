@@ -74,17 +74,17 @@ public interface MovieService {
         }).collect(Collectors.toList());
 
         //책에서는 아래와 같이 Setter를 썼으나, Setter사용을 자제하기 위해 주니하랑은 아래와 같이 Builder 사용
-//        movieDTO.setImageDTOList(movieImageDTOList);
-//        movieDTO.setAvg(avg);
-//        movieDTO.setReviewCnt(reviewCnt.intValue());
+        movieDTO.setImageDTOList(movieImageDTOList);
+        movieDTO.setAvg(avg);
+        movieDTO.setReviewCnt(reviewCnt.intValue());
+
+        return movieDTO;
+        
+//        MovieDTO movieDTOBuilder = movieDTO.builder().imageDTOList(movieImageDTOList)
+//                .avg(avg)
+//                .reviewCnt(reviewCnt.intValue())
+//                .build();
 //
-//        return movieDTO;
-        
-        MovieDTO movieDTOBuilder = movieDTO.builder().imageDTOList(movieImageDTOList)
-                .avg(avg)
-                .reviewCnt(reviewCnt.intValue())
-                .build();
-        
-        return movieDTOBuilder;
+//        return movieDTOBuilder;
     } // entitiesToDTO() 끝
 } // interface 끝

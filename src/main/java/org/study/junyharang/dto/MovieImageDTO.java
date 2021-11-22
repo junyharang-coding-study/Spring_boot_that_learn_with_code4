@@ -30,7 +30,7 @@ import java.util.List;
 
     public String getThumbnailURL() {
         try{
-            return URLEncoder.encode(path+"/s"+uuid+"_"+imageName, "UTF-8");
+            return URLEncoder.encode(path+"/s_"+uuid+"_"+imageName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

@@ -112,13 +112,13 @@
           // 실제 업로드 부분
           // upload Ajax
           $.ajax({
-            url : '/uploadAjax',
-            processData : false,
-            contentType : false,
-            data : formData,
-            type : 'POST',
-            dataType : 'json',
-            success : function (result) {
+            url: '/uploadAjax',
+            processData: false,
+            contentType: false,
+            data: formData,
+            type: 'POST',
+            dataType: 'json',
+            success: function (result) {
               console.log(result);
               showResult(result);
 
